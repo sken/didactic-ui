@@ -13,7 +13,7 @@ export interface ColorPickerProps extends HTMLAttributes<HTMLDivElement> {
     onColorSelect: (color: string) => void
 }
 
-const Wrapper = styled.div<ColorPickerProps>`
+const Wrapper = styled.div`
     width: 840px;
 `;
 
