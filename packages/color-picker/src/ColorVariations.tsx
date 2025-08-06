@@ -17,6 +17,7 @@ const ResetUl = styled.ul`
 
 const ColorVariationUl = styled(ResetUl)`
     min-width: 841px;
+    height:20px;
 
     :hover {
         ul {
@@ -93,11 +94,11 @@ const VariationLi = styled(UnstyledLi)`
 `;
 
 export default function ColorVariations({
-                                    hsb,
-                                    stepsUpDown = 6,
-                                    variationSteps = 8,
-                                    onColorSelect,
-                                }: ColorVariationsProps): React.JSX.Element {
+                                            hsb,
+                                            stepsUpDown = 6,
+                                            variationSteps = 8,
+                                            onColorSelect,
+                                        }: ColorVariationsProps): React.JSX.Element {
 
     const stepValues = useMemo(() => {
         const result: Record<number, [number, number]> = {0: [hsb.s, hsb.b]};
@@ -121,60 +122,62 @@ export default function ColorVariations({
     const gstep = 100 / variationSteps
 
     return (
-        <ColorVariationUl>
-            {keys.map(key => {
-                const [s0, b0] = stepValues[key]
+        <div>
+            <ColorVariationUl>
+                {keys.map(key => {
+                    const [s0, b0] = stepValues[key]
 
-                const isMainCurrent =
-                    hsb.s === (key === 0 ? hsb.s : s0) &&
-                    hsb.b === (key === 0 ? hsb.b : b0)
+                    const isMainCurrent =
+                        hsb.s === (key === 0 ? hsb.s : s0) &&
+                        hsb.b === (key === 0 ? hsb.b : b0)
 
-                const rgbMain: RGB = HSBtoRGB({h: hsb.h, s: s0, b: b0})
-                const bgMain = `#${RGBtoHex(rgbMain)}`
+                    const rgbMain: RGB = HSBtoRGB({h: hsb.h, s: s0, b: b0})
+                    const bgMain = `#${RGBtoHex(rgbMain)}`
 
-                const subClass = key < 0 ? 's_variation' : 'b_variation'
-                const liClassName = `${key === 0 ? 'main_color' : ''} ${isMainCurrent ? 'current' : ''}`;
-                return (
-                    <ColorLi
-                        $backgroundColor={bgMain}
-                        className={liClassName}
-                        key={key}
-                        onClick={() => {
-                            onColorSelect({h: hsb.h, s: s0, b: b0});
-                        }}
-                    >
-                        <SubVariationUl className={subClass}>
-                            {Array.from({length: variationSteps - 1}).map((_, i) => {
-                                // build the sub‐variation HSV
-                                const v = 100 - gstep * (i + 1)
-                                let subHsb: HSB
-                                if (key < 0) {
-                                    subHsb = {h: hsb.h, s: v, b: b0}
-                                } else if (key === 0) {
-                                    subHsb = {h: hsb.h, s: v, b: v}
-                                } else {
-                                    subHsb = {h: hsb.h, s: s0, b: v}
-                                }
-                                const rgbSub = HSBtoRGB(subHsb)
-                                const bgSub = `#${RGBtoHex(rgbSub)}`
-                                const isSubCurrent = subHsb.s === hsb.s && subHsb.b === hsb.b
+                    const subClass = key < 0 ? 's_variation' : 'b_variation'
+                    const liClassName = `${key === 0 ? 'main_color' : ''} ${isMainCurrent ? 'current' : ''}`;
+                    return (
+                        <ColorLi
+                            $backgroundColor={bgMain}
+                            className={liClassName}
+                            key={key}
+                            onClick={() => {
+                                onColorSelect({h: hsb.h, s: s0, b: b0});
+                            }}
+                        >
+                            <SubVariationUl className={subClass}>
+                                {Array.from({length: variationSteps - 1}).map((_, i) => {
+                                    // build the sub‐variation HSV
+                                    const v = 100 - gstep * (i + 1)
+                                    let subHsb: HSB
+                                    if (key < 0) {
+                                        subHsb = {h: hsb.h, s: v, b: b0}
+                                    } else if (key === 0) {
+                                        subHsb = {h: hsb.h, s: v, b: v}
+                                    } else {
+                                        subHsb = {h: hsb.h, s: s0, b: v}
+                                    }
+                                    const rgbSub = HSBtoRGB(subHsb)
+                                    const bgSub = `#${RGBtoHex(rgbSub)}`
+                                    const isSubCurrent = subHsb.s === hsb.s && subHsb.b === hsb.b
 
-                                return (
-                                    <VariationLi
-                                        className={isSubCurrent ? 'current' : ''}
-                                        key={i}
-                                        onClick={e => {
-                                            e.stopPropagation()
-                                            onColorSelect(subHsb)
-                                        }}
-                                        style={{background: bgSub}}
-                                    />
-                                )
-                            })}
-                        </SubVariationUl>
-                    </ColorLi>
-                )
-            })}
-        </ColorVariationUl>
+                                    return (
+                                        <VariationLi
+                                            className={isSubCurrent ? 'current' : ''}
+                                            key={i}
+                                            onClick={e => {
+                                                e.stopPropagation()
+                                                onColorSelect(subHsb)
+                                            }}
+                                            style={{background: bgSub}}
+                                        />
+                                    )
+                                })}
+                            </SubVariationUl>
+                        </ColorLi>
+                    )
+                })}
+            </ColorVariationUl>
+        </div>
     )
 }

@@ -6,7 +6,7 @@ const Box = styled.div`
     position: absolute;
     width: 18px;
     height: 18px;
-    border: 1px solid red;
+    border: 1px solid #000;
     cursor: grab;
     user-select: none;
     touch-action: none;
