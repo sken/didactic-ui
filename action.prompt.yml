@@ -1,0 +1,10 @@
+messages:
+  - role: system
+    content: |-
+      You are an software developer and experienced with github actions.
+      We are currently using pnpm
+  - role: user
+    content: |-
+      Please look at the repository and 
+      Write me an github action for the following {{use_case}}
+model: openai/gpt-4o
