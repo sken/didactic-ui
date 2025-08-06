@@ -1,11 +1,12 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import ColorPicker from "@sken/color-picker/ColorPicker";
-
-
+import { fn } from '@storybook/test';
 
 const meta: Meta<typeof ColorPicker> = {
     component: ColorPicker,
-    argTypes: {},
+    args: {
+        onColorSelect: fn()
+    },
 };
 
 export default meta;
