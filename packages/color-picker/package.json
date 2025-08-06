@@ -1,0 +1,43 @@
+{
+  "name": "@sken/color-picker",
+  "version": "1.0.4",
+  "sideEffects": false,
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./ColorPicker": {
+      "types": "./dist/ColorPicker.d.mts",
+      "import": "./dist/ColorPicker.mjs",
+      "require": "./dist/ColorPicker.js"
+    },
+    "./ColorVariations": {
+      "types": "./dist/ColorVariations.d.mts",
+      "import": "./dist/ColorVariations.mjs",
+      "require": "./dist/ColorVariations.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup --format cjs,esm --dts --sourcemap inline",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "clean": "rm -rf .turbo node_modules dist"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "eslint": "^8.57.0",
+    "styled-components": "^6.1.19",
+    "tsup": "^8.0.2",
+    "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
