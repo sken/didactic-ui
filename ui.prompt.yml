@@ -1,0 +1,13 @@
+modelParameters:
+  max_completion_tokens: 13107
+  temperature: 1
+  top_p: 1
+  stop: []
+  frequency_penalty: 0
+  presence_penalty: 0
+model: openai/gpt-4.1
+messages:
+  - role: system
+    content: You are a software developer
+  - role: user
+    content: Create a next.js typescript component with the name {{component_name}}
