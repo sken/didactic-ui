@@ -16,6 +16,16 @@
       "types": "./dist/ColorVariations.d.mts",
       "import": "./dist/ColorVariations.mjs",
       "require": "./dist/ColorVariations.js"
+    },
+    "./ColorOutput": {
+      "types": "./dist/ColorOutput.d.mts",
+      "import": "./dist/ColorOutput.mjs",
+      "require": "./dist/ColorOutput.js"
+    },
+    "./colorUtils": {
+      "types": "./dist/colorUtils.d.mts",
+      "import": "./dist/colorUtils.mjs",
+      "require": "./dist/colorUtils.js"
     }
   },
   "scripts": {
