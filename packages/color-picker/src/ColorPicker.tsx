@@ -4,8 +4,9 @@ import React, {useEffect, useState} from "react";
 import type {HSB, RGB} from './types'
 import {HSBtoRGB, RGBtoHSB, RGBtoHex} from './colorUtils'
 import Draggable from "./Draggable";
-import ColorVariations from "./ColorVariations";
-import ColorOutput from "./ColorOutput";
+import {ColorOutput} from "./ColorOutput";
+import {ColorVariations} from "./ColorVariations";
+
 
 
 export interface ColorPickerProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
     width: 840px;
 `;
 
-function ColorPicker({className, initialRGB, onColorSelect}: ColorPickerProps): React.JSX.Element {
+export function ColorPicker({className, initialRGB, onColorSelect}: ColorPickerProps): React.JSX.Element {
 
     const [mainHsb, setMainHsb] = useState<HSB>({h: 0, s: 100, b: 100})
     const [hsb, setHsb] = useState<HSB>({h: 0, s: 100, b: 100})
@@ -63,5 +64,3 @@ function ColorPicker({className, initialRGB, onColorSelect}: ColorPickerProps): 
 
     );
 }
-
-export default ColorPicker;

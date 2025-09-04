@@ -1,9 +1,10 @@
 import type {Meta, StoryObj} from "@storybook/react-vite";
-import ColorPicker from "@sken/color-picker/ColorPicker";
+import { ColorPicker } from "@sken/color-picker";
 import { fn } from 'storybook/test';
 
 const meta: Meta<typeof ColorPicker> = {
     component: ColorPicker,
+    title: 'Color Picker/Color Picker',
     args: {
         onColorSelect: fn()
     },
@@ -18,12 +19,11 @@ type Story = StoryObj<typeof ColorPicker>;
  * See https://storybook.js.org/docs/react/api/csf
  * to learn how to use render functions.
  */
-export const Primary: Story = {
+export const Default: Story = {
     render: (props) => (
         <ColorPicker
             {...props}
         >
         </ColorPicker>
-    ),
-    name: "ColorPicker"
+    )
 };

@@ -7,23 +7,28 @@
     "dist"
   ],
   "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
     "./ColorPicker": {
-      "types": "./dist/ColorPicker.d.mts",
+      "types": "./src/ColorPicker.tsx",
       "import": "./dist/ColorPicker.mjs",
       "require": "./dist/ColorPicker.js"
     },
     "./ColorVariations": {
-      "types": "./dist/ColorVariations.d.mts",
+      "types": "./src/ColorVariations.tsx",
       "import": "./dist/ColorVariations.mjs",
       "require": "./dist/ColorVariations.js"
     },
     "./ColorOutput": {
-      "types": "./dist/ColorOutput.d.mts",
+      "types": "./src/ColorOutput.tsx",
       "import": "./dist/ColorOutput.mjs",
       "require": "./dist/ColorOutput.js"
     },
     "./colorUtils": {
-      "types": "./dist/colorUtils.d.mts",
+      "types": "./src/colorUtils.ts",
       "import": "./dist/colorUtils.mjs",
       "require": "./dist/colorUtils.js"
     }

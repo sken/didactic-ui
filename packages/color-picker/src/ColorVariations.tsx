@@ -93,7 +93,7 @@ const VariationLi = styled(UnstyledLi)`
     }
 `;
 
-export default function ColorVariations({
+export function ColorVariations({
                                             hsb,
                                             stepsUpDown = 6,
                                             variationSteps = 8,

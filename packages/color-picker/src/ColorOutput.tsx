@@ -12,7 +12,7 @@ const ColorOutputUl = styled.ul`
     list-style: none`;
 
 
-function ColorOutput({rgb, hsb, hex}: ColorOutputProps): React.JSX.Element {
+export function ColorOutput({rgb, hsb, hex}: ColorOutputProps): React.JSX.Element {
 
     return (
         <ColorOutputUl>
@@ -24,4 +24,4 @@ function ColorOutput({rgb, hsb, hex}: ColorOutputProps): React.JSX.Element {
     )
 }
 
-export default ColorOutput;
+ColorOutput.displayName = "ColorOutput";

@@ -1,7 +1,5 @@
 import type {Meta, StoryObj} from "@storybook/react-vite";
-
-import styled from "styled-components";
-import ColorVariations from "@sken/color-picker/ColorVariations"; // import your helper fns
+import {ColorVariations} from "@sken/color-picker";
 
 const meta = {
     component: ColorVariations,
@@ -24,6 +22,7 @@ const meta = {
             }
         }
     },
+    title: 'Color Picker/Color Variations',
 } satisfies Meta<typeof ColorVariations>;
 
 
@@ -44,11 +43,9 @@ export const Primary: Story = {
         </ColorVariations>
 
     ),
-    name: " ColorVariations",
     args: {
         hsb: {h: 0, s: 100, b: 100},
         stepsUpDown: 6,
         variationSteps: 8
-
     }
 };
