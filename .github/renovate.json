@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":prHourlyLimit2",
+    ":prConcurrentLimit10",
+    ":maintainLockFilesWeekly",
+    ":dependencyDashboard"
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Group @types packages together",
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "definitely-typed"
+    },
+    {
+      "description": "Group storybook packages together",
+      "matchPackagePatterns": ["^@storybook/"],
+      "groupName": "storybook"
+    },
+    {
+      "description": "Group monorepo-specific tooling",
+      "matchPackageNames": ["turbo", "pnpm"],
+      "groupName": "monorepo-tooling"
+    }
+  ]
+}
