@@ -33,6 +33,6 @@ To add dependencies:
 - **Styling**: Vanilla CSS or `styled-components` (in `packages/color-picker`). Avoid adding ad-hoc styles; use CSS variables / theme properties.
 - **Exports**: Follow the `exports` configuration in `packages/color-picker/package.json` when adding new modules.
 
-## 🤖 Renovate Bot
-- Renovate configuration is located in the root `renovate.json` or `.github/renovate.json`.
-- When updating packages, group them logically to minimize PR noise (e.g., group `@types/*` packages, group storybook packages).
+## 🤖 Dependabot
+- Dependabot configuration is located in `.github/dependabot.yml`.
+- Dependabot is configured to check for updates weekly and group related dependencies (like `@types/*`, `@storybook/*`, and linting/formatting tools) to keep PRs organized and reduce noise.
