@@ -147,8 +147,17 @@ export function ColorVariations({
                             $backgroundColor={bgMain}
                             $isMainColor={key === 0}
                             key={key}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Select main color ${bgMain}`}
                             onClick={() => {
                                 onColorSelect({h: hsb.h, s: s0, b: b0});
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    onColorSelect({h: hsb.h, s: s0, b: b0});
+                                }
                             }}
                         >
                             <SubVariationUl className={subClass}>
@@ -171,9 +180,19 @@ export function ColorVariations({
                                         <VariationLi
                                             className={isSubCurrent ? 'current' : ''}
                                             key={i}
+                                            role="button"
+                                            tabIndex={0}
+                                            aria-label={`Select variation ${bgSub}`}
                                             onClick={e => {
                                                 e.stopPropagation()
                                                 onColorSelect(subHsb)
+                                            }}
+                                            onKeyDown={e => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    onColorSelect(subHsb);
+                                                }
                                             }}
                                             style={{background: bgSub}}
                                         />

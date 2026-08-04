@@ -37,6 +37,8 @@
     "build": "tsup --format cjs,esm --dts --sourcemap inline",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rm -rf .turbo node_modules dist"
   },
   "devDependencies": {
@@ -47,7 +49,8 @@
     "eslint": "^8.57.0",
     "styled-components": "^6.1.19",
     "tsup": "^8.5.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "react": "^18.2.0"

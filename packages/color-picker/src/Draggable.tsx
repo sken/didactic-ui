@@ -40,8 +40,14 @@ export function Draggable({onDragEnd, ...props}: DraggableProps): React.JSX.Elem
     })
 
     return (
-        <RainbowBar>
-            <Box onMouseDown={onMouseDown} ref={ref}/>
+        <RainbowBar {...props}>
+            <Box 
+                onMouseDown={onMouseDown} 
+                ref={ref}
+                role="slider"
+                tabIndex={0}
+                aria-label="Hue Slider"
+            />
         </RainbowBar>
     )
 }
