@@ -44,8 +44,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "eslint": "^8.57.1",
     "styled-components": "^6.4.4",
     "tsup": "^8.5.1",
@@ -53,7 +53,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "react": "^18.3.1"
+    "react": "^19.2.8"
   },
   "publishConfig": {
     "access": "public"
