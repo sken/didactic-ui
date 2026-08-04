@@ -44,16 +44,16 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^18.2.61",
-    "@types/react-dom": "^18.2.19",
-    "eslint": "^8.57.0",
-    "styled-components": "^6.1.19",
-    "tsup": "^8.5.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "eslint": "^8.57.1",
+    "styled-components": "^6.4.4",
+    "tsup": "^8.5.1",
     "typescript": "5.5.4",
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "react": "^18.2.0"
+    "react": "^18.3.1"
   },
   "publishConfig": {
     "access": "public"
