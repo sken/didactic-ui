@@ -3,7 +3,7 @@ import type {HTMLAttributes} from "react";
 import React, {useEffect, useState} from "react";
 import type {HSB, RGB} from './types'
 import {HSBtoRGB, RGBtoHSB, RGBtoHex} from './colorUtils'
-import Draggable from "./Draggable";
+import { Draggable } from "./Draggable";
 import {ColorOutput} from "./ColorOutput";
 import {ColorVariations} from "./ColorVariations";
 
@@ -23,9 +23,10 @@ export function ColorPicker({className, initialRGB, onColorSelect}: ColorPickerP
 
     const [mainHsb, setMainHsb] = useState<HSB>({h: 0, s: 100, b: 100})
     const [hsb, setHsb] = useState<HSB>({h: 0, s: 100, b: 100})
-    const [rgb, setRgb] = useState<RGB>({r: 255, g: 0, b: 0})
-    const [hex, setHex] = useState<string>('ff0000')
 
+    // Derived state (no need for useState or separate useEffect)
+    const rgb = HSBtoRGB(hsb)
+    const hex = RGBtoHex(rgb)
 
     // on mount, if they passed initialRGB, convert to HSV
     useEffect(() => {
@@ -35,13 +36,10 @@ export function ColorPicker({className, initialRGB, onColorSelect}: ColorPickerP
         }
     }, [initialRGB])
 
-    // whenever hsb changes recalc rgb, hex & fetch images
+    // whenever hex changes, trigger the callback
     useEffect(() => {
-        const _rgb = HSBtoRGB(hsb)
-        setRgb(_rgb)
-        setHex(RGBtoHex(_rgb))
         onColorSelect(hex)
-    }, [hsb, hex, onColorSelect])
+    }, [hex, onColorSelect])
 
 
     // hue‐slider drag handler

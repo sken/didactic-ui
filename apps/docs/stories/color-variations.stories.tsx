@@ -23,6 +23,13 @@ const meta = {
         }
     },
     title: 'Color Picker/Color Variations',
+    decorators: [
+        (Story) => (
+            <div style={{ minHeight: '300px' }}>
+                <Story />
+            </div>
+        )
+    ]
 } satisfies Meta<typeof ColorVariations>;
 
 

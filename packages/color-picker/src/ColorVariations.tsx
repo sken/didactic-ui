@@ -3,7 +3,7 @@ import styled from "styled-components"; // import your helper fns
 import type {HSB, RGB} from './types'        // import your shared color interfaces
 import {HSBtoRGB, RGBtoHex} from './colorUtils'
 
-export interface ColorVariationsProps {
+export interface ColorVariationsProps extends React.HTMLAttributes<HTMLDivElement> {
     hsb: HSB
     variationSteps?: number
     onColorSelect: (newHsb: HSB) => void,
@@ -41,7 +41,10 @@ const UnstyledLi = styled(LiWithBorder)`
 
 const ColorLi = styled(UnstyledLi).attrs<{
     $backgroundColor: string
-}>(props => ({$backgroundColor: props.$backgroundColor || '#fff'}))`
+}>(props => ({$backgroundColor: props.$backgroundColor || '#fff'}))<{
+    $isMainColor?: boolean;
+}>`
+    position: relative;
     cursor: pointer;
     background: ${props => props.$backgroundColor};
 
@@ -60,7 +63,7 @@ const ColorLi = styled(UnstyledLi).attrs<{
         border-right: none;
     }
 
-    &.main_color {
+    ${props => props.$isMainColor && `
         margin-top: -4px;
         margin-left: -4px;
         height: 28px;
@@ -72,13 +75,16 @@ const ColorLi = styled(UnstyledLi).attrs<{
                 top: 30px;
             }
         }
-    }
+    `}
 `;
 
 const SubVariationUl = styled(ResetUl)`
     display: none;
-    position: relative;
-    top: 21px;
+    position: absolute;
+    top: 20px;
+    left: -1px;
+    width: 64px;
+    z-index: 10;
 `;
 
 const VariationLi = styled(UnstyledLi)`
@@ -98,6 +104,7 @@ export function ColorVariations({
                                             stepsUpDown = 6,
                                             variationSteps = 8,
                                             onColorSelect,
+                                            ...props
                                         }: ColorVariationsProps): React.JSX.Element {
 
     const stepValues = useMemo(() => {
@@ -122,7 +129,7 @@ export function ColorVariations({
     const gstep = 100 / variationSteps
 
     return (
-        <div>
+        <div {...props}>
             <ColorVariationUl>
                 {keys.map(key => {
                     const [s0, b0] = stepValues[key]
@@ -135,11 +142,10 @@ export function ColorVariations({
                     const bgMain = `#${RGBtoHex(rgbMain)}`
 
                     const subClass = key < 0 ? 's_variation' : 'b_variation'
-                    const liClassName = `${key === 0 ? 'main_color' : ''} ${isMainCurrent ? 'current' : ''}`;
                     return (
                         <ColorLi
                             $backgroundColor={bgMain}
-                            className={liClassName}
+                            $isMainColor={key === 0}
                             key={key}
                             onClick={() => {
                                 onColorSelect({h: hsb.h, s: s0, b: b0});

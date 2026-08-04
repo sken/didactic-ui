@@ -26,11 +26,11 @@ const RainbowBar = styled.div`
     );
 `
 
-interface DraggableProps {
+export interface DraggableProps extends React.HTMLAttributes<HTMLDivElement> {
     onDragEnd: (x: number, y: number) => void
 }
 
-export default function Draggable({onDragEnd}: DraggableProps): React.JSX.Element {
+export function Draggable({onDragEnd, ...props}: DraggableProps): React.JSX.Element {
 
     const {ref, onMouseDown} = useDraggable<HTMLDivElement>({
         axis: 'x',
