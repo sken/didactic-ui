@@ -1,6 +1,6 @@
 {
   "name": "@sken/color-picker",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "sideEffects": false,
   "license": "MIT",
   "files": [
@@ -54,7 +54,59 @@
     "vitest": "^4.1.10"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.mts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "./ColorPicker": {
+        "import": {
+          "types": "./dist/ColorPicker.d.mts",
+          "default": "./dist/ColorPicker.mjs"
+        },
+        "require": {
+          "types": "./dist/ColorPicker.d.ts",
+          "default": "./dist/ColorPicker.js"
+        }
+      },
+      "./ColorVariations": {
+        "import": {
+          "types": "./dist/ColorVariations.d.mts",
+          "default": "./dist/ColorVariations.mjs"
+        },
+        "require": {
+          "types": "./dist/ColorVariations.d.ts",
+          "default": "./dist/ColorVariations.js"
+        }
+      },
+      "./ColorOutput": {
+        "import": {
+          "types": "./dist/ColorOutput.d.mts",
+          "default": "./dist/ColorOutput.mjs"
+        },
+        "require": {
+          "types": "./dist/ColorOutput.d.ts",
+          "default": "./dist/ColorOutput.js"
+        }
+      },
+      "./colorUtils": {
+        "import": {
+          "types": "./dist/colorUtils.d.mts",
+          "default": "./dist/colorUtils.mjs"
+        },
+        "require": {
+          "types": "./dist/colorUtils.d.ts",
+          "default": "./dist/colorUtils.js"
+        }
+      }
+    }
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
