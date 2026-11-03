@@ -1,12 +1,14 @@
 import type {HSB, RGB} from './types'
 
-export function HSBtoRGB({h, s, b}: HSB): RGB {
-    h = Math.round(h)
-    s = Math.round(s * 255 / 100)
-    b = Math.round(b * 255 / 100)
+export function HSBtoRGB(hsb: HSB): RGB {
+    let h = Math.round(hsb.h)
+    const s = Math.round(hsb.s * 255 / 100)
+    const b = Math.round(hsb.b * 255 / 100)
     let r, g, bl
     if (s === 0) {
-        r = g = bl = b
+        r = b
+        g = b
+        bl = b
     } else {
         const t1 = b
         const t2 = ((255 - s) * b) / 255
@@ -75,4 +77,21 @@ export function RGBtoHex({r, g, b}: RGB): string {
     const hg = g.toString(16).padStart(2, '0')
     const hb = b.toString(16).padStart(2, '0')
     return `${hr}${hg}${hb}`
+}
+
+/** The hue slider: 840 px for 360 degrees, in 20 steps of 42 px (18 degrees). */
+export const HUE_SLIDER_WIDTH = 840
+export const HUE_SLIDER_STEP = 42
+
+/** Hue (0-360) at a slider offset in px, clamped. With `snap`, to the nearest 18-degree step. */
+export function hueFromOffset(x: number, snap = false): number {
+    const clamped = Math.min(HUE_SLIDER_WIDTH, Math.max(0, x))
+    const px = snap ? Math.round(clamped / HUE_SLIDER_STEP) * HUE_SLIDER_STEP : clamped
+    return Math.round((px / HUE_SLIDER_WIDTH) * 360)
+}
+
+/** Slider offset in px for a hue, on the 18-degree grid. */
+export function offsetFromHue(h: number): number {
+    const steps = HUE_SLIDER_WIDTH / HUE_SLIDER_STEP
+    return Math.round((((h % 360) + 360) % 360) / 360 * steps) * HUE_SLIDER_STEP
 }

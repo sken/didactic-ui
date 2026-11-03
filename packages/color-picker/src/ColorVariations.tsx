@@ -1,9 +1,10 @@
 import React, {useMemo} from 'react'
+import type {HTMLAttributes} from 'react'
 import styled from "styled-components"; // import your helper fns
 import type {HSB, RGB} from './types'        // import your shared color interfaces
 import {HSBtoRGB, RGBtoHex} from './colorUtils'
 
-export interface ColorVariationsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ColorVariationsProps extends HTMLAttributes<HTMLDivElement> {
     hsb: HSB
     variationSteps?: number
     onColorSelect: (newHsb: HSB) => void,
@@ -15,9 +16,11 @@ const ResetUl = styled.ul`
     margin: 0;
 `;
 
+// 13 equal cells across the full width, so the row lines up with the hue bar
 const ColorVariationUl = styled(ResetUl)`
-    min-width: 841px;
-    height:20px;
+    display: flex;
+    width: 100%;
+    height: 20px;
 
     :hover {
         ul {
@@ -33,31 +36,22 @@ const LiWithBorder = styled.li`
 const UnstyledLi = styled(LiWithBorder)`
     list-style-type: none;
     display: block;
-    float: left;
+    box-sizing: border-box;
     height: 20px;
     line-height: 20px;
-    width: 64px;
 `;
 
 const ColorLi = styled(UnstyledLi).attrs<{
     $backgroundColor: string
 }>(props => ({$backgroundColor: props.$backgroundColor || '#fff'}))<{
     $isMainColor?: boolean;
+    $count: number;
 }>`
     position: relative;
+    /* an explicit border-box width, so the main cell's thicker border does not widen it */
+    flex: 0 0 calc(100% / ${props => props.$count});
     cursor: pointer;
     background: ${props => props.$backgroundColor};
-
-    &:last-child,
-    &:first-child {
-        width: 62px;
-
-        > ul {
-            li {
-                width: 62px;
-            }
-        }
-    }
 
     &:last-child {
         border-right: none;
@@ -65,7 +59,6 @@ const ColorLi = styled(UnstyledLi).attrs<{
 
     ${props => props.$isMainColor && `
         margin-top: -4px;
-        margin-left: -4px;
         height: 28px;
         line-height: 28px;
         border: 2px solid #fff;
@@ -83,7 +76,7 @@ const SubVariationUl = styled(ResetUl)`
     position: absolute;
     top: 20px;
     left: -1px;
-    width: 64px;
+    width: calc(100% + 1px);
     z-index: 10;
 `;
 
@@ -134,10 +127,6 @@ export function ColorVariations({
                 {keys.map(key => {
                     const [s0, b0] = stepValues[key]
 
-                    const isMainCurrent =
-                        hsb.s === (key === 0 ? hsb.s : s0) &&
-                        hsb.b === (key === 0 ? hsb.b : b0)
-
                     const rgbMain: RGB = HSBtoRGB({h: hsb.h, s: s0, b: b0})
                     const bgMain = `#${RGBtoHex(rgbMain)}`
 
@@ -145,11 +134,10 @@ export function ColorVariations({
                     return (
                         <ColorLi
                             $backgroundColor={bgMain}
+                            $count={keys.length}
                             $isMainColor={key === 0}
-                            key={key}
-                            role="button"
-                            tabIndex={0}
                             aria-label={`Select main color ${bgMain}`}
+                            key={key}
                             onClick={() => {
                                 onColorSelect({h: hsb.h, s: s0, b: b0});
                             }}
@@ -159,6 +147,8 @@ export function ColorVariations({
                                     onColorSelect({h: hsb.h, s: s0, b: b0});
                                 }
                             }}
+                            role="button"
+                            tabIndex={0}
                         >
                             <SubVariationUl className={subClass}>
                                 {Array.from({length: variationSteps - 1}).map((_, i) => {
@@ -178,11 +168,9 @@ export function ColorVariations({
 
                                     return (
                                         <VariationLi
-                                            className={isSubCurrent ? 'current' : ''}
-                                            key={i}
-                                            role="button"
-                                            tabIndex={0}
                                             aria-label={`Select variation ${bgSub}`}
+                                            className={isSubCurrent ? 'current' : ''}
+                                            key={v}
                                             onClick={e => {
                                                 e.stopPropagation()
                                                 onColorSelect(subHsb)
@@ -194,7 +182,9 @@ export function ColorVariations({
                                                     onColorSelect(subHsb);
                                                 }
                                             }}
+                                            role="button"
                                             style={{background: bgSub}}
+                                            tabIndex={0}
                                         />
                                     )
                                 })}

@@ -6,7 +6,8 @@ const meta: Meta<typeof ColorPicker> = {
     component: ColorPicker,
     title: 'Color Picker/Color Picker',
     args: {
-        onColorSelect: fn()
+        onColorSelect: fn(),
+        onColorPreview: fn(),
     },
 };
 
@@ -23,7 +24,16 @@ export const Default: Story = {
     render: (props) => (
         <ColorPicker
             {...props}
-        >
-        </ColorPicker>
+        />
     )
+};
+
+/*
+ * Starts from a given colour: the hue handle, the shade row and the selection
+ * follow `initialRGB`. `onColorPreview` reports live while the handle is dragged.
+ */
+export const WithInitialColour: Story = {
+    args: {
+        initialRGB: {r: 40, g: 90, b: 170},
+    },
 };

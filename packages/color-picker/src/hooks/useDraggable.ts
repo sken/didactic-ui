@@ -5,16 +5,23 @@ import {
 } from 'react'
 
 type Axis   = 'both' | 'x' | 'y'
-type Bounds = { left?: number; right?: number; top?: number; bottom?: number }
+interface Bounds { left?: number; right?: number; top?: number; bottom?: number }
 type Grid   = [number, number]
 
 export interface UseDraggableOptions {
     axis?: Axis
     bounds?: Bounds
     grid?: Grid
+    /** Called on every move while dragging, before grid snapping. */
     onDrag?: (x: number, y: number) => void
+    /** Called once on release, with the snapped position. */
     onDragEnd?: (x: number, y: number) => void
     initial?: { x: number; y: number }
+    /**
+     * Controlled position. When it changes (and no drag is running) the
+     * element moves there, e.g. when the parent gets a new initial colour.
+     */
+    position?: { x: number; y: number }
     /**
      * CSS transition for the snap animation on release.
      * e.g. "transform 200ms ease-out"
@@ -22,132 +29,117 @@ export interface UseDraggableOptions {
     dropTransition?: string
 }
 
+export interface UseDraggableResult<T extends HTMLElement> {
+    ref: React.RefObject<T>
+    onPointerDown: (e: React.PointerEvent) => void
+}
+
+/**
+ * Drag an element with mouse, pen or touch (pointer events with pointer
+ * capture), clamped to bounds and snapped to a grid on release.
+ */
 export function useDraggable<T extends HTMLElement>(
     opts: UseDraggableOptions = {}
-): { ref: React.RefObject<T>; onMouseDown: (e: React.MouseEvent) => void } {
+): UseDraggableResult<T> {
     const {
         axis     = 'both',
         bounds   = {},
         grid     = [1, 1],
-        onDrag,
-        onDragEnd,
         initial,
+        position,
         dropTransition = 'transform 200ms ease-out',
     } = opts
 
-    // ref to the DOM node
     const ref = useRef<T>(null)
-
-    // are we in a drag session?
     const draggingRef = useRef(false)
-
-    // where the pointer was on mousedown
+    // where the pointer was on pointerdown
     const startRef = useRef({ x: 0, y: 0 })
-
-    // base translate values at the start of this drag
+    // translate values at the start of this drag
     const baseRef = useRef({
-        x: initial?.x ?? bounds.left ?? 0,
-        y: initial?.y ?? bounds.top  ?? 0,
+        x: position?.x ?? initial?.x ?? bounds.left ?? 0,
+        y: position?.y ?? initial?.y ?? bounds.top  ?? 0,
     })
+    // latest options, so the listeners never see stale callbacks or bounds
+    const optsRef = useRef(opts)
+    optsRef.current = opts
 
-    // helper to set transform
-    const apply = (x: number, y: number) => {
-        const el = ref.current!
-        el.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    const apply = (x: number, y: number): void => {
+        const el = ref.current
+        if (el) el.style.transform = `translate3d(${x}px, ${y}px, 0)`
     }
 
-    // position element on mount
+    const clamp = (x: number, y: number): [number, number] => {
+        const {left = -Infinity, right = Infinity, top = -Infinity, bottom = Infinity} = optsRef.current.bounds ?? {}
+        return [Math.min(right, Math.max(left, x)), Math.min(bottom, Math.max(top, y))]
+    }
+
+    // position the element on mount, and whenever the controlled position changes
+    const px = position?.x
+    const py = position?.y
     useEffect(() => {
+        if (draggingRef.current) return
+        if (px !== undefined) baseRef.current.x = px
+        if (py !== undefined) baseRef.current.y = py
         apply(baseRef.current.x, baseRef.current.y)
-    }, [])
+    }, [px, py])
 
-    // ─── L I V E   D R A G ───────────────────────────────
-    // only clamp to bounds, no grid snapping here
-    const onMouseMove = useCallback((e: MouseEvent) => {
+    const onPointerMove = useCallback((e: PointerEvent) => {
         if (!draggingRef.current) return
-
         let dx = e.clientX - startRef.current.x
         let dy = e.clientY - startRef.current.y
-
         if (axis === 'x') dy = 0
         if (axis === 'y') dx = 0
+        const [x, y] = clamp(baseRef.current.x + dx, baseRef.current.y + dy)
+        apply(x, y)
+        optsRef.current.onDrag?.(x, y)
+    }, [axis])
 
-        let newX = baseRef.current.x + dx
-        let newY = baseRef.current.y + dy
-
-        // clamp to bounds only
-        if (bounds.left   != null && newX < bounds.left)   newX = bounds.left
-        if (bounds.right  != null && newX > bounds.right)  newX = bounds.right
-        if (bounds.top    != null && newY < bounds.top)    newY = bounds.top
-        if (bounds.bottom != null && newY > bounds.bottom) newY = bounds.bottom
-
-        apply(newX, newY)
-        onDrag?.(newX, newY)
-    }, [axis, bounds, onDrag])
-
-    // ─── O N   R E L E A S E ─────────────────────────────
-    const onMouseUp = useCallback(() => {
+    const onPointerUp = useCallback((e: PointerEvent) => {
         if (!draggingRef.current) return
         draggingRef.current = false
+        const el = ref.current
+        if (!el) return
+        el.removeEventListener('pointermove', onPointerMove)
+        el.removeEventListener('pointerup', onPointerUp)
+        el.removeEventListener('pointercancel', onPointerUp)
+        if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId)
 
-        const el = ref.current!
-        // read the *actual* transform at drag‐end
-        const style  = window.getComputedStyle(el)
-        const matrix = new DOMMatrixReadOnly(style.transform)
+        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(el).transform)
         let finalX = matrix.m41
         let finalY = matrix.m42
-
-        // now **snap to grid** and re‐clamp
-        const [gX, gY] = grid
+        const [gX, gY] = optsRef.current.grid ?? grid
         if (gX > 0) finalX = Math.round(finalX / gX) * gX
         if (gY > 0) finalY = Math.round(finalY / gY) * gY
+        ;[finalX, finalY] = clamp(finalX, finalY)
 
-        if (bounds.left   != null && finalX < bounds.left)   finalX = bounds.left
-        if (bounds.right  != null && finalX > bounds.right)  finalX = bounds.right
-        if (bounds.top    != null && finalY < bounds.top)    finalY = bounds.top
-        if (bounds.bottom != null && finalY > bounds.bottom) finalY = bounds.bottom
-
-        // always a non-zero delta now → safe to add transition
+        // animate the snap; report right away (a zero-distance snap fires no transitionend)
         el.style.transition = dropTransition
-
-        // trigger the transition next frame
-        requestAnimationFrame(() => apply(finalX, finalY))
-
-        // cleanup after transition
-        const onEnd = () => {
+        requestAnimationFrame(() => { apply(finalX, finalY) })
+        const onEnd = (): void => {
             el.style.transition = ''
             el.removeEventListener('transitionend', onEnd)
-            baseRef.current.x = finalX
-            baseRef.current.y = finalY
-            onDragEnd?.(finalX, finalY)
         }
         el.addEventListener('transitionend', onEnd)
+        baseRef.current = { x: finalX, y: finalY }
+        optsRef.current.onDragEnd?.(finalX, finalY)
+    }, [grid, dropTransition, onPointerMove])
 
-        // remove global listeners
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup',   onMouseUp)
-    }, [grid, bounds, dropTransition, onDragEnd, onMouseMove])
-
-    // ─── S T A R T   D R A G ─────────────────────────────
-    const onMouseDown = useCallback((e: React.MouseEvent) => {
+    const onPointerDown = useCallback((e: React.PointerEvent) => {
+        if (e.button !== 0) return
+        const el = ref.current
+        if (!el) return
         e.preventDefault()
-        const el = ref.current!
-
-        // kill any lingering transition
         el.style.transition = 'none'
-
-        // read *current* transform into our base
-        const style  = window.getComputedStyle(el)
-        const matrix = new DOMMatrixReadOnly(style.transform)
-        baseRef.current.x = matrix.m41
-        baseRef.current.y = matrix.m42
-
+        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(el).transform)
+        baseRef.current = { x: matrix.m41, y: matrix.m42 }
         draggingRef.current = true
         startRef.current = { x: e.clientX, y: e.clientY }
+        // pointer capture: moves keep arriving even outside the element, also for touch
+        el.setPointerCapture(e.pointerId)
+        el.addEventListener('pointermove', onPointerMove)
+        el.addEventListener('pointerup', onPointerUp)
+        el.addEventListener('pointercancel', onPointerUp)
+    }, [onPointerMove, onPointerUp])
 
-        document.addEventListener('mousemove', onMouseMove)
-        document.addEventListener('mouseup',   onMouseUp)
-    }, [onMouseMove, onMouseUp])
-
-    return { ref, onMouseDown }
+    return { ref, onPointerDown }
 }
