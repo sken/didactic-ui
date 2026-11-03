@@ -46,8 +46,7 @@ export const Primary: Story = {
                 // eslint-disable-next-line no-alert -- alert for demo
                 alert("Hello from Turborepo!");
             }}
-        >
-        </ColorVariations>
+        />
 
     ),
     args: {

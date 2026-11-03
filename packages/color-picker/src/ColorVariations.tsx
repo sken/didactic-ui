@@ -1,9 +1,10 @@
 import React, {useMemo} from 'react'
+import type {HTMLAttributes} from 'react'
 import styled from "styled-components"; // import your helper fns
 import type {HSB, RGB} from './types'        // import your shared color interfaces
 import {HSBtoRGB, RGBtoHex} from './colorUtils'
 
-export interface ColorVariationsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ColorVariationsProps extends HTMLAttributes<HTMLDivElement> {
     hsb: HSB
     variationSteps?: number
     onColorSelect: (newHsb: HSB) => void,
@@ -126,10 +127,6 @@ export function ColorVariations({
                 {keys.map(key => {
                     const [s0, b0] = stepValues[key]
 
-                    const isMainCurrent =
-                        hsb.s === (key === 0 ? hsb.s : s0) &&
-                        hsb.b === (key === 0 ? hsb.b : b0)
-
                     const rgbMain: RGB = HSBtoRGB({h: hsb.h, s: s0, b: b0})
                     const bgMain = `#${RGBtoHex(rgbMain)}`
 
@@ -139,10 +136,8 @@ export function ColorVariations({
                             $backgroundColor={bgMain}
                             $count={keys.length}
                             $isMainColor={key === 0}
-                            key={key}
-                            role="button"
-                            tabIndex={0}
                             aria-label={`Select main color ${bgMain}`}
+                            key={key}
                             onClick={() => {
                                 onColorSelect({h: hsb.h, s: s0, b: b0});
                             }}
@@ -152,6 +147,8 @@ export function ColorVariations({
                                     onColorSelect({h: hsb.h, s: s0, b: b0});
                                 }
                             }}
+                            role="button"
+                            tabIndex={0}
                         >
                             <SubVariationUl className={subClass}>
                                 {Array.from({length: variationSteps - 1}).map((_, i) => {
@@ -171,11 +168,9 @@ export function ColorVariations({
 
                                     return (
                                         <VariationLi
-                                            className={isSubCurrent ? 'current' : ''}
-                                            key={i}
-                                            role="button"
-                                            tabIndex={0}
                                             aria-label={`Select variation ${bgSub}`}
+                                            className={isSubCurrent ? 'current' : ''}
+                                            key={v}
                                             onClick={e => {
                                                 e.stopPropagation()
                                                 onColorSelect(subHsb)
@@ -187,7 +182,9 @@ export function ColorVariations({
                                                     onColorSelect(subHsb);
                                                 }
                                             }}
+                                            role="button"
                                             style={{background: bgSub}}
+                                            tabIndex={0}
                                         />
                                     )
                                 })}

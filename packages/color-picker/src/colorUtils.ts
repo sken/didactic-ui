@@ -1,12 +1,14 @@
 import type {HSB, RGB} from './types'
 
-export function HSBtoRGB({h, s, b}: HSB): RGB {
-    h = Math.round(h)
-    s = Math.round(s * 255 / 100)
-    b = Math.round(b * 255 / 100)
+export function HSBtoRGB(hsb: HSB): RGB {
+    let h = Math.round(hsb.h)
+    const s = Math.round(hsb.s * 255 / 100)
+    const b = Math.round(hsb.b * 255 / 100)
     let r, g, bl
     if (s === 0) {
-        r = g = bl = b
+        r = b
+        g = b
+        bl = b
     } else {
         const t1 = b
         const t2 = ((255 - s) * b) / 255

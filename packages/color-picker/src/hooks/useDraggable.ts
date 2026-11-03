@@ -5,7 +5,7 @@ import {
 } from 'react'
 
 type Axis   = 'both' | 'x' | 'y'
-type Bounds = { left?: number; right?: number; top?: number; bottom?: number }
+interface Bounds { left?: number; right?: number; top?: number; bottom?: number }
 type Grid   = [number, number]
 
 export interface UseDraggableOptions {

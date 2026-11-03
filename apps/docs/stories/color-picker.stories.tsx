@@ -24,8 +24,7 @@ export const Default: Story = {
     render: (props) => (
         <ColorPicker
             {...props}
-        >
-        </ColorPicker>
+        />
     )
 };
 
