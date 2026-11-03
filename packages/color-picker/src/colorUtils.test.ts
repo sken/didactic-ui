@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HSBtoRGB, RGBtoHSB, RGBtoHex } from './colorUtils';
+import { HSBtoRGB, RGBtoHSB, RGBtoHex, hueFromOffset, offsetFromHue } from './colorUtils';
 
 describe('colorUtils', () => {
     describe('HSBtoRGB', () => {
@@ -75,6 +75,33 @@ describe('colorUtils', () => {
         it('pads single digits with zero', () => {
             const hex = RGBtoHex({ r: 15, g: 10, b: 5 });
             expect(hex).toBe('0f0a05');
+        });
+    });
+
+    describe('hue slider offsets', () => {
+        it('maps the slider ends to 0 and 360 degrees', () => {
+            expect(hueFromOffset(0)).toBe(0);
+            expect(hueFromOffset(840)).toBe(360);
+            expect(hueFromOffset(420)).toBe(180);
+        });
+
+        it('clamps offsets outside the slider', () => {
+            expect(hueFromOffset(-30)).toBe(0);
+            expect(hueFromOffset(900)).toBe(360);
+        });
+
+        it('snaps to 18-degree steps', () => {
+            expect(hueFromOffset(50, true)).toBe(18);
+            expect(hueFromOffset(62, true)).toBe(18);
+            expect(hueFromOffset(64, true)).toBe(36);
+        });
+
+        it('places a hue on the 42 px grid', () => {
+            expect(offsetFromHue(0)).toBe(0);
+            expect(offsetFromHue(5)).toBe(0);
+            expect(offsetFromHue(10)).toBe(42);
+            expect(offsetFromHue(220)).toBe(504);
+            expect(offsetFromHue(360)).toBe(0);
         });
     });
 });

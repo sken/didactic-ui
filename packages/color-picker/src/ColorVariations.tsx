@@ -15,9 +15,11 @@ const ResetUl = styled.ul`
     margin: 0;
 `;
 
+// 13 equal cells across the full width, so the row lines up with the hue bar
 const ColorVariationUl = styled(ResetUl)`
-    min-width: 841px;
-    height:20px;
+    display: flex;
+    width: 100%;
+    height: 20px;
 
     :hover {
         ul {
@@ -33,31 +35,22 @@ const LiWithBorder = styled.li`
 const UnstyledLi = styled(LiWithBorder)`
     list-style-type: none;
     display: block;
-    float: left;
+    box-sizing: border-box;
     height: 20px;
     line-height: 20px;
-    width: 64px;
 `;
 
 const ColorLi = styled(UnstyledLi).attrs<{
     $backgroundColor: string
 }>(props => ({$backgroundColor: props.$backgroundColor || '#fff'}))<{
     $isMainColor?: boolean;
+    $count: number;
 }>`
     position: relative;
+    /* an explicit border-box width, so the main cell's thicker border does not widen it */
+    flex: 0 0 calc(100% / ${props => props.$count});
     cursor: pointer;
     background: ${props => props.$backgroundColor};
-
-    &:last-child,
-    &:first-child {
-        width: 62px;
-
-        > ul {
-            li {
-                width: 62px;
-            }
-        }
-    }
 
     &:last-child {
         border-right: none;
@@ -65,7 +58,6 @@ const ColorLi = styled(UnstyledLi).attrs<{
 
     ${props => props.$isMainColor && `
         margin-top: -4px;
-        margin-left: -4px;
         height: 28px;
         line-height: 28px;
         border: 2px solid #fff;
@@ -83,7 +75,7 @@ const SubVariationUl = styled(ResetUl)`
     position: absolute;
     top: 20px;
     left: -1px;
-    width: 64px;
+    width: calc(100% + 1px);
     z-index: 10;
 `;
 
@@ -145,6 +137,7 @@ export function ColorVariations({
                     return (
                         <ColorLi
                             $backgroundColor={bgMain}
+                            $count={keys.length}
                             $isMainColor={key === 0}
                             key={key}
                             role="button"
